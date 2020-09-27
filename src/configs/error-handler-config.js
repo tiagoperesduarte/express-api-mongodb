@@ -1,4 +1,8 @@
-const {HttpError} = require('./http-error');
+const {HttpError} = require('../errors/http-errors');
+
+const configureErrorHandler = (app) => {
+    app.use(errorHandler);
+};
 
 const errorHandler = (err, req, res, next) => {
     if (err instanceof HttpError) {
@@ -11,4 +15,4 @@ const errorHandler = (err, req, res, next) => {
     next(err);
 };
 
-module.exports = errorHandler;
+module.exports = configureErrorHandler;

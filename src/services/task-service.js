@@ -1,13 +1,13 @@
-const {NotFoundError} = require("../errors/http-error");
+const {NotFoundError} = require('../errors/http-errors');
+const Task = require('../models/task');
+const taskRepository = require('../repositories/task-repository');
 
-let tasks = [];
-
-const getTasks = () => {
-    return Promise.resolve(tasks);
+const getTasks = async () => {
+    return await taskRepository.getTasks();
 };
 
-const getTaskById = (id) => {
-    const task = tasks.find(task => task.id == id);
+const getTaskById = async (id) => {
+    const task = await taskRepository.getTaskById(id);
 
     if (!task) {
         throw new NotFoundError(`Task not found with identifier ${id}`);
@@ -16,44 +16,36 @@ const getTaskById = (id) => {
     return Promise.resolve(task);
 };
 
-const createTask = (task) => {
-    tasks.push(task);
+const createTask = async (data) => {
+    const task = new Task({
+        description: data.description,
+        done: data.done
+    });
 
-    return Promise.resolve(task);
+    return await taskRepository.saveTask(task);
 };
 
-const updateTask = (id, task) => {
-    const index = getTaskIndexById(id);
-
-    if (index === -1) {
-        throw new NotFoundError(`Task not found with identifier ${id}`);
-    }
-
-    tasks[index] = task;
-
-    return Promise.resolve(task);
-};
-
-const deleteTaskById = (id, task) => {
-    const index = getTaskIndexById(id);
-
-    if (index === -1) {
-        throw new NotFoundError(`Task not found with identifier ${id}`);
-    }
-
-    tasks.splice(index, 1);
-
-    return Promise.resolve();
-};
-
-const getTaskIndexById = (id) => {
-    const task = tasks.find(task => task.id == id);
+const updateTask = async (id, data) => {
+    const task = await taskRepository.getTaskById(id);
 
     if (!task) {
-        return -1;
+        throw new NotFoundError(`Task not found with identifier ${id}`);
     }
 
-    return tasks.indexOf(task);
+    task.description = data.description;
+    task.done = data.done;
+
+    return await taskRepository.saveTask(task);
+};
+
+const deleteTaskById = async (id) => {
+    const task = await taskRepository.getTaskById(id);
+
+    if (!task) {
+        throw new NotFoundError(`Task not found with identifier ${id}`);
+    }
+
+    await taskRepository.deleteTaskById(id);
 };
 
 module.exports = {
