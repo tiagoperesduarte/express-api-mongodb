@@ -1,8 +1,8 @@
 const bodyParser = require('body-parser');
 
-const configureDb = require("./db-config");
-const configureRoutes = require("./routes-config");
-const configureErrorHandler = require("./error-handler-config");
+const configureDb = require('./db-config');
+const configureRoutes = require('./routes-config');
+const configureErrorHandler = require('./error-handler-config');
 
 const configureApi = (app) => {
     app.use(bodyParser.urlencoded({extended: false}));
