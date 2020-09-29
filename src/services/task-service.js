@@ -13,7 +13,7 @@ const getTaskById = async (id) => {
         throw new NotFoundError(`Task not found with identifier ${id}`);
     }
 
-    return Promise.resolve(task);
+    return task;
 };
 
 const createTask = async (data) => {
